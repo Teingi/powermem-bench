@@ -1,0 +1,20 @@
+{
+  "powermem": {
+    "base_url": "http://localhost:8000",
+    "api_key": "",
+    "use_v2": true,
+    "request_config": {}
+  },
+  "openclaw": {
+    "gateway_url": "http://127.0.0.1:18789",
+    "gateway_token": "",
+    "model": "openclaw"
+  },
+  "bench": {
+    "concurrency": 200,
+    "duration": 300,
+    "user_count": 200,
+    "agent_count": 50,
+    "mode": "mix"
+  }
+}

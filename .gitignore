@@ -1,0 +1,43 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local environment/config
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs and temp files
+*.log
+*.tmp
+tmp/
+temp/
+
+# Benchmark generated artifacts
+results*.json
+results*.jsonl
+data/mock_*
+data/*.jsonl
+data/*.csv
