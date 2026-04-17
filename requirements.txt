@@ -1,1 +1,3 @@
 httpx
+dashscope
+python-dotenv

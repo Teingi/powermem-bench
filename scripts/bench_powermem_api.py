@@ -199,7 +199,7 @@ async def main() -> None:
             "query": query,
             "user_id": user_id,
             "agent_id": agent_id,
-            "limit": 30,
+            "limit": 3,
         }
         if config_payload:
             body["config"] = config_payload
