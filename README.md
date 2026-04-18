@@ -39,18 +39,36 @@ python scripts/generate_mock_data.py --count 2000
   - 直连 powermem-server（v2 API）
   - OpenClaw LTM 端到端链路
 
-### 快速上手命令（直连 v2 API）
+### 快速上手命令（直连 API）
 ```
 python scripts/bench_powermem_api.py \
   --base-url http://localhost:8000 \
+  --api-version v1 \
   --mode mix \
-  --concurrency 200 \
+  --concurrency 10 \
   --duration 300 \
   --user-count 200 \
   --agent-count 50 \
   --warmup-creates 10 \
   --cleanup-before-run \
+  --cleanup-global \
   --output results_powermem_mix.json
+```
+
+### 快速上手命令（多实例路由，推荐高并发）
+```
+python scripts/bench_powermem_api.py \
+  --base-urls http://localhost:8000,http://localhost:8001,http://localhost:8002 \
+  --api-version v1 \
+  --route-strategy sticky-worker \
+  --mode mix \
+  --concurrency 60 \
+  --duration 60 \
+  --user-count 200 \
+  --agent-count 50 \
+  --warmup-creates 10 \
+  --cleanup-before-run \
+  --output results_powermem_mix_multi.json
 ```
 
 ### 快速上手命令（OpenClaw LTM，推荐）
@@ -83,6 +101,10 @@ python scripts/bench_openclaw_e2e.py \
 需要更保守的超时设置时，可追加：`--timeout 240`。
 
 常用参数：
+- `--base-url`：单个 powermem-server 地址（兼容旧用法）
+- `--base-urls`：多个 powermem-server 地址（逗号分隔），用于请求分流
+- `--api-version v1|v2`：选择压测接口版本（默认 `v2`）
+- `--route-strategy sticky-worker|round-robin|random`：多后端路由策略（默认 `sticky-worker`）
 - `--mode write|read|mix`：读写比例
 - `--infer`：开启智能记忆（默认关闭，减少模型外部开销）
 - `--api-key`：powermem-server 开启鉴权时填写
@@ -97,6 +119,13 @@ python scripts/bench_openclaw_e2e.py \
 - `--cleanup-page-size`：清理时每轮拉取数量（默认 200）
 - `--cleanup-max-rounds`：每个上下文的最大清理轮数（默认 200）
 - `--graceful-stop-timeout`：首次中断后等待收敛的秒数，超时会强制取消 worker（默认 5）
+- `--collect-server-metrics / --no-collect-server-metrics`：是否在压测前后拉取 `/api/{version}/system/metrics`（当前不在输出结果中展示，默认开启）
+
+路由说明：
+- 当配置多个后端时，`create/search` 按路由策略分发到不同实例
+- `update/delete` 会自动路由回该 memory 最初创建所在实例，避免跨实例更新/删除失败
+- `cleanup-before-run` 在多后端场景会对所有后端执行清理
+- 控制台与结果 JSON 会展示常规压测结果（如 `metrics`）；仅不展示 `server_metrics`
 
 ---
 
