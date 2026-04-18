@@ -815,6 +815,10 @@ async def main() -> None:
         for sig in registered_signals:
             loop.remove_signal_handler(sig)
 
+    metrics_summary = metrics.summary()
+    total_count = sum(item.get("count", 0) for item in metrics_summary.values())
+    total_errors = sum(item.get("errors", 0) for item in metrics_summary.values())
+
     summary = {
         "api_version": args.api_version,
         "mode": args.mode,
@@ -828,7 +832,13 @@ async def main() -> None:
         "cleanup_before_run": args.cleanup_before_run,
         "cleanup_global": args.cleanup_global,
         "cleanup_strategy": args.cleanup_strategy,
-        "metrics": metrics.summary(),
+        "metrics": metrics_summary,
+        "total": {
+            "count": total_count,
+            "errors": total_errors,
+            "error_rate": (total_errors / total_count) if total_count else 0.0,
+            "qps": (total_count / args.duration) if args.duration > 0 else None,
+        },
     }
 
     if args.collect_server_metrics:
